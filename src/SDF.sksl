@@ -1,0 +1,6 @@
+// kind=shader
+uniform float4 colors[4];
+
+vec4 main(vec2 xy) {
+    return colors[1];
+}
