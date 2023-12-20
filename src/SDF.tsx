@@ -9,21 +9,17 @@ import {
 
 import ShaderDotSKSL from "./SDF.sksl";
 
-const source = Skia.RuntimeEffect.Make(ShaderDotSKSL);
-
-const colors = ["#dafb61", "#61dafb", "#fb61da", "#61fbcf"].map((c) =>
-  Skia.Color(c)
-);
-
 const uniforms: Uniforms = {
-  colors,
+  colors: ["#dafb61", "#61dafb", "#fb61da", "#61fbcf"].map((c) =>
+    Skia.Color(c)
+  ),
 };
 
 export const SDF = () => {
   return (
     <Canvas style={{ flex: 1 }}>
       <Fill>
-        <Shader source={source} uniforms={uniforms} />
+        <Shader source={ShaderDotSKSL} uniforms={uniforms} />
       </Fill>
     </Canvas>
   );
