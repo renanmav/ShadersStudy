@@ -12,6 +12,10 @@ const screens: Array<Screen> = [
     name: "⭕️ SDF of a Circle",
     routeName: "CircleSDF",
   },
+  {
+    name: "😵‍💫 SDF of a Line",
+    routeName: "LineSDF",
+  },
 ];
 
 export function Home() {
@@ -40,10 +44,8 @@ const styles = StyleSheet.create({
   screen: {
     backgroundColor: "white",
     padding: 20,
-    borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderTopColor: "lightgray",
-    borderBottomColor: "lightgray",
+    borderBottomColor: "#eee",
   },
   title: {
     fontSize: 16,
