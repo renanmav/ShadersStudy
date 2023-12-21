@@ -1,6 +1,41 @@
 // kind=shader
+
+// uniforms
 uniform float4 colors[4];
+uniform float2 center;
+uniform float radius;
+uniform float strokeWidth;
+uniform float2 pointer;
+
+float4 black = float4(0, 0, 0, 1);
+
+// Signed distance of a circle
+float sdCircle(float2 p, float r) {
+    return length(p) - r;
+}
+
+struct Paint {
+    float4 color;
+    bool stroke;
+    float strokeWidth;
+};
+
+// Draw circle
+float4 drawCircle(float4 color, float2 p, float r, Paint paint) {
+    float d = sdCircle(p, paint.stroke ? r - paint.strokeWidth / 2 : r);
+    bool isFill = paint.stroke == false && d < 0;
+    bool isStroke = paint.stroke == true && abs(d) <= paint.strokeWidth / 2;
+    if (isFill || isStroke) {
+        return paint.color;
+    }
+    return color;
+}
 
 vec4 main(vec2 xy) {
-    return colors[1];
+    float4 color = colors[0];
+    color = drawCircle(color, xy - center, radius, Paint(colors[1], false, 0));
+    color = drawCircle(color, xy - pointer, 10, Paint(black, false, 0));
+    float d = sdCircle(pointer - center, radius);
+    color = drawCircle(color, xy - pointer, abs(d), Paint(black, true, strokeWidth));
+    return color;
 }
