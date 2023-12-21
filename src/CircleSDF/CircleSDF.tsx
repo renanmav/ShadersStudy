@@ -9,17 +9,20 @@ import {
   useValue,
   useComputedValue,
 } from "@shopify/react-native-skia";
-import { Dimensions } from "react-native";
+import { useWindowDimensions } from "react-native";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 import CircleSDFSource from "./CircleSDF.sksl";
-
-const { width, height } = Dimensions.get("screen");
 
 const colors = ["#dafb61", "#61dafb", "#fb61da", "#61fbcf"].map((c) =>
   Skia.Color(c)
 );
 
 export const CircleSDF = () => {
+  const headerHeight = useHeaderHeight();
+  const { width, height: windowHeight } = useWindowDimensions();
+  const height = windowHeight - headerHeight;
+
   const pointer = useValue(vec(width / 2, height / 2));
 
   const onTouch = useTouchHandler({
