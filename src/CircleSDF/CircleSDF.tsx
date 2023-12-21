@@ -11,7 +11,7 @@ import {
 } from "@shopify/react-native-skia";
 import { Dimensions } from "react-native";
 
-import ShaderDotSKSL from "./SDF.sksl";
+import CircleSDFSource from "./CircleSDF.sksl";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -19,7 +19,7 @@ const colors = ["#dafb61", "#61dafb", "#fb61da", "#61fbcf"].map((c) =>
   Skia.Color(c)
 );
 
-export const SDF = () => {
+export const CircleSDF = () => {
   const pointer = useValue(vec(width / 2, height / 2));
 
   const onTouch = useTouchHandler({
@@ -42,7 +42,7 @@ export const SDF = () => {
   return (
     <Canvas style={{ flex: 1 }} onTouch={onTouch}>
       <Fill>
-        <Shader source={ShaderDotSKSL} uniforms={uniforms} />
+        <Shader source={CircleSDFSource} uniforms={uniforms} />
       </Fill>
     </Canvas>
   );
