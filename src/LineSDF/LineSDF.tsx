@@ -15,9 +15,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 
 import LineSDFSource from "./LineSDF.sksl";
 
-const colors = ["#dafb61", "#61dafb", "#fb61da", "#61fbcf"].map((c) =>
-  Skia.Color(c)
-);
+const colors = ["#222", "#bbb", "#111", "#fff"].map((c) => Skia.Color(c));
 
 export const LineSDF = () => {
   const headerHeight = useHeaderHeight();
