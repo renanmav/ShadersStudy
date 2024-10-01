@@ -6,9 +6,9 @@ import {
   Uniforms,
   vec,
   useTouchHandler,
-  useValue,
-  useComputedValue,
 } from "@shopify/react-native-skia";
+import { useSharedValue, useDerivedValue } from "react-native-reanimated";
+
 import { useWindowDimensions } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 
@@ -24,21 +24,21 @@ export const CircleSDF = () => {
   const height = windowHeight - headerHeight;
   const center = vec(width / 2, height / 2);
 
-  const pointer = useValue(vec(width / 2, height / 2));
+  const pointer = useSharedValue(vec(width / 2, height / 2));
 
   const onTouch = useTouchHandler({
     onActive: (event) => {
-      pointer.current = vec(event.x, event.y);
+      pointer.value = vec(event.x, event.y);
     },
   });
 
-  const uniforms = useComputedValue<Uniforms>(
+  const uniforms = useDerivedValue<Uniforms>(
     () => ({
       colors,
       center,
       radius: width / 3,
       strokeWidth: 2,
-      pointer: pointer.current,
+      pointer: pointer.value,
     }),
     [pointer]
   );

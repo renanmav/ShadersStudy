@@ -6,10 +6,9 @@ import {
   Uniforms,
   vec,
   useTouchHandler,
-  useValue,
-  useComputedValue,
-  useClockValue,
+  useClock,
 } from "@shopify/react-native-skia";
+import { useSharedValue, useDerivedValue } from "react-native-reanimated";
 import { useWindowDimensions } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 
@@ -23,24 +22,24 @@ export const LineSDF = () => {
   const height = windowHeight - headerHeight;
   const center = vec(width / 2, height / 2);
 
-  const pointer = useValue(vec(width / 2, height / 2));
+  const pointer = useSharedValue(vec(width / 2, height / 2));
 
-  const clock = useClockValue();
+  const clock = useClock();
 
   const onTouch = useTouchHandler({
     onActive: (event) => {
-      pointer.current = vec(event.x, event.y);
+      pointer.value = vec(event.x, event.y);
     },
   });
 
-  const uniforms = useComputedValue<Uniforms>(
+  const uniforms = useDerivedValue<Uniforms>(
     () => ({
       colors,
       center,
       radius: width / 2,
       strokeWidth: 15,
-      pointer: pointer.current,
-      clock: clock.current,
+      pointer: pointer.value,
+      clock: clock.value,
     }),
     [pointer, clock]
   );
