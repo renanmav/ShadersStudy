@@ -8,7 +8,6 @@ import {
   useTouchHandler,
 } from "@shopify/react-native-skia";
 import { useSharedValue, useDerivedValue } from "react-native-reanimated";
-
 import { useWindowDimensions } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 
