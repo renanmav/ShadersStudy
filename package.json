@@ -13,7 +13,7 @@
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
     "@shopify/react-native-skia": "1.2.3",
-    "expo": "~51.0.35",
+    "expo": "~51.0.39",
     "expo-asset": "~10.0.10",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
