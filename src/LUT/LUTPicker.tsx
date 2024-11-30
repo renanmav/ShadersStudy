@@ -1,10 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
+// TODO: automatically load all LUT files from the assets folder
+// import { Asset } from "expo-asset";
+// import * as FileSystem from "expo-file-system";
+// import RNFS from "react-native-fs";
+
+import { useLUTFiles } from "./useLUTFiles";
+
 export function LUTPicker() {
+  const lutFiles = useLUTFiles();
+
+  const LUTs = useMemo(() => lutFiles?.map((lut) => lut.name), [lutFiles]);
+
   const [selectedLUT, setSelectedLUT] = useState("");
-  const lutFiles = ["LUT1.cube", "LUT2.cube", "LUT3.cube"]; // Example LUT files
+
+  // useEffect(() => {
+  //   async function loadLUTFiles() {
+  //     let files = [];
+  //     try {
+  //       const folderUri = Asset.fromModule(require("../../assets/Waves.cube"));
+  //       console.log("folderUri", folderUri);
+  //     } catch (error) {
+  //       console.error("Error loading LUT files:", error);
+  //     }
+  //     console.log("files", files);
+  //   }
+  //   loadLUTFiles();
+  // }, []);
+
+  if (!LUTs) return null;
 
   return (
     <View style={styles.container}>
@@ -15,7 +41,7 @@ export function LUTPicker() {
         itemStyle={styles.pickerItem}
         numberOfLines={1}
       >
-        {lutFiles.map((file) => (
+        {LUTs.map((file) => (
           <Picker.Item key={file} label={file} value={file} />
         ))}
       </Picker>

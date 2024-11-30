@@ -7,11 +7,15 @@ import {
 
 import PermissionsPage from "./PermissionsPage";
 import NoCameraDevicePage from "./NoCameraDevicePage";
+
 import { LUTPicker } from "./LUTPicker";
+import { useLUTFrameProcessor } from "./useLUTFrameProcessor";
 
 export default function LUTScreen() {
   const device = useCameraDevice("back");
   const { hasPermission } = useCameraPermission();
+
+  const frameProcessor = useLUTFrameProcessor();
 
   if (!hasPermission) return <PermissionsPage />;
   if (device == null) return <NoCameraDevicePage />;
@@ -25,6 +29,7 @@ export default function LUTScreen() {
           style={StyleSheet.absoluteFillObject}
           device={device}
           isActive={true}
+          frameProcessor={frameProcessor}
         />
       </View>
     </View>
