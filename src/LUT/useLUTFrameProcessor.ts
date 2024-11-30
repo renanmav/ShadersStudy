@@ -1,31 +1,36 @@
-import { useMemo } from "react";
-import { useFrameProcessor } from "react-native-vision-camera";
+import { useSkiaFrameProcessor } from "react-native-vision-camera";
 import { Skia } from "@shopify/react-native-skia";
 
-import LUTShaderSource from "./LUTShader.sksl";
-import { SelectedLUT } from "./types";
+import LUTShader from "./LUTShader.sksl";
+import { ParsedLUT } from "./types";
 
-export function useLUTFrameProcessor(selectedLUT: SelectedLUT) {
-  const shader = useMemo(() => LUTShaderSource, []);
+export function useLUTFrameProcessor(parsedLUT: ParsedLUT) {
+  return useSkiaFrameProcessor(
+    (frame) => {
+      "worklet";
 
-  console.log("selectedLUT", selectedLUT);
+      if (!parsedLUT) {
+        console.log("LUT data not available");
+        return;
+      }
 
-  return useFrameProcessor((frame) => {
-    "worklet";
+      const { width, height, pixelFormat, bytesPerRow } = frame;
+      // console.log("frame info", { width, height, pixelFormat, bytesPerRow });
 
-    if (!shader) {
-      console.error("Shader not initialized");
-      return;
-    }
+      const shaderBuilder = Skia.RuntimeShaderBuilder(LUTShader);
 
-    // const skiaImage = Skia.Image.MakeImageFromNativeBuffer(
-    //   frame.getNativeBuffer()
-    // );
+      // shaderBuilder.setUniform("luts", parsedLUT.data);
 
-    // console.log("frame", frame.width, frame.height, frame.pixelFormat);
-    // console.log("skiaImage", skiaImage);
-    // console.log("lutFile", lutFile);
+      const imageFilter = Skia.ImageFilter.MakeRuntimeShader(
+        shaderBuilder,
+        null,
+        null
+      );
+      const paint = Skia.Paint();
+      paint.setImageFilter(imageFilter);
 
-    // TODO: apply LUT to the frame
-  }, []);
+      frame.render(paint);
+    },
+    [parsedLUT]
+  );
 }

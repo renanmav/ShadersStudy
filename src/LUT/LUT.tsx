@@ -12,14 +12,16 @@ import NoCameraDevicePage from "./NoCameraDevicePage";
 import { LUTPicker } from "./LUTPicker";
 import { useLUTFrameProcessor } from "./useLUTFrameProcessor";
 import { SelectedLUT } from "./types";
+import { useLoadAndParseCubeLUT } from "./useLoadAndParseCubeLUT";
 
 export default function LUTScreen() {
   const device = useCameraDevice("back");
   const { hasPermission } = useCameraPermission();
 
   const [selectedLUT, setSelectedLUT] = useState<SelectedLUT>(null);
+  const parsedLUT = useLoadAndParseCubeLUT(selectedLUT);
 
-  const frameProcessor = useLUTFrameProcessor(selectedLUT);
+  const frameProcessor = useLUTFrameProcessor(parsedLUT);
 
   if (!hasPermission) return <PermissionsPage />;
   if (device == null) return <NoCameraDevicePage />;
@@ -33,6 +35,7 @@ export default function LUTScreen() {
           style={StyleSheet.absoluteFillObject}
           device={device}
           isActive={true}
+          pixelFormat="rgb"
           frameProcessor={frameProcessor}
         />
       </View>
