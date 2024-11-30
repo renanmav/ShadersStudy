@@ -1,0 +1,21 @@
+// kind=shader
+
+// uniforms
+uniform shader image;
+uniform shader luts;
+
+// main
+half4 main(float2 xy) {
+    vec4 color = image.eval(xy);
+
+    int r = int(color.r * 255.0 / 4);
+    int g = int(color.g * 255.0 / 4);
+    int b = int(color.b * 255.0 / 4);
+
+    float lutX = float(int(mod(float(b), 8.0)) * 64 + r);
+    float lutY = float(int((b / 8) * 64 + g));
+
+    vec4 lutsColor = luts.eval(float2(lutX, lutY));
+
+    return lutsColor;
+}
