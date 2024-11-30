@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import {
   Camera,
   useCameraDevice,
@@ -6,14 +6,14 @@ import {
 } from "react-native-vision-camera";
 
 import PermissionsPage from "./PermissionsPage";
-import NoCameraDeviceError from "./NoCameraDeviceError";
+import NoCameraDevicePage from "./NoCameraDevicePage";
 
 export default function LUTScreen() {
   const device = useCameraDevice("back");
   const { hasPermission } = useCameraPermission();
 
   if (!hasPermission) return <PermissionsPage />;
-  if (device == null) return <NoCameraDeviceError />;
+  if (device == null) return <NoCameraDevicePage />;
 
   return (
     <View>
