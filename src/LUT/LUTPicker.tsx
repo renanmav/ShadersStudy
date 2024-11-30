@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
@@ -8,35 +8,45 @@ import { Picker } from "@react-native-picker/picker";
 // import RNFS from "react-native-fs";
 
 import { useLUTFiles } from "./useLUTFiles";
+import { SelectedLUT } from "./types";
 
-export function LUTPicker() {
+interface Props {
+  value: SelectedLUT;
+  onChange: (lut: SelectedLUT) => void;
+}
+
+export function LUTPicker({ value, onChange }: Props) {
   const lutFiles = useLUTFiles();
 
   const LUTs = useMemo(() => lutFiles?.map((lut) => lut.name), [lutFiles]);
 
-  const [selectedLUT, setSelectedLUT] = useState("");
+  useEffect(
+    function initalizeValueOnAssetLoad() {
+      // if lutFiles is not loaded or value is already set, do nothing
+      if (!lutFiles || value) return;
 
-  // useEffect(() => {
-  //   async function loadLUTFiles() {
-  //     let files = [];
-  //     try {
-  //       const folderUri = Asset.fromModule(require("../../assets/Waves.cube"));
-  //       console.log("folderUri", folderUri);
-  //     } catch (error) {
-  //       console.error("Error loading LUT files:", error);
-  //     }
-  //     console.log("files", files);
-  //   }
-  //   loadLUTFiles();
-  // }, []);
+      onChange(lutFiles[0]);
+    },
+    [lutFiles]
+  );
+
+  const handleChange = useCallback(
+    (lutNameSelected: string) => {
+      if (!lutFiles) return;
+
+      const lutFile = lutFiles.find((lut) => lut.name === lutNameSelected);
+      onChange(lutFile);
+    },
+    [lutFiles]
+  );
 
   if (!LUTs) return null;
 
   return (
     <View style={styles.container}>
       <Picker
-        selectedValue={selectedLUT}
-        onValueChange={(lutSelected) => setSelectedLUT(lutSelected)}
+        selectedValue={value?.name}
+        onValueChange={handleChange}
         style={styles.picker}
         itemStyle={styles.pickerItem}
         numberOfLines={1}

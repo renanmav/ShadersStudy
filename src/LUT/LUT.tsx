@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import {
   Camera,
@@ -10,19 +11,22 @@ import NoCameraDevicePage from "./NoCameraDevicePage";
 
 import { LUTPicker } from "./LUTPicker";
 import { useLUTFrameProcessor } from "./useLUTFrameProcessor";
+import { SelectedLUT } from "./types";
 
 export default function LUTScreen() {
   const device = useCameraDevice("back");
   const { hasPermission } = useCameraPermission();
 
-  const frameProcessor = useLUTFrameProcessor();
+  const [selectedLUT, setSelectedLUT] = useState<SelectedLUT>(null);
+
+  const frameProcessor = useLUTFrameProcessor(selectedLUT);
 
   if (!hasPermission) return <PermissionsPage />;
   if (device == null) return <NoCameraDevicePage />;
 
   return (
     <View style={styles.container}>
-      <LUTPicker />
+      <LUTPicker value={selectedLUT} onChange={setSelectedLUT} />
 
       <View style={styles.cameraContainer}>
         <Camera
