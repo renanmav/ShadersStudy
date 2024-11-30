@@ -7,6 +7,7 @@ import {
 
 import PermissionsPage from "./PermissionsPage";
 import NoCameraDevicePage from "./NoCameraDevicePage";
+import { LUTPicker } from "./LUTPicker";
 
 export default function LUTScreen() {
   const device = useCameraDevice("back");
@@ -16,8 +17,30 @@ export default function LUTScreen() {
   if (device == null) return <NoCameraDevicePage />;
 
   return (
-    <View>
-      <Camera style={StyleSheet.absoluteFill} device={device} isActive={true} />
+    <View style={styles.container}>
+      <LUTPicker />
+
+      <View style={styles.cameraContainer}>
+        <Camera
+          style={StyleSheet.absoluteFillObject}
+          device={device}
+          isActive={true}
+        />
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  text: {
+    fontSize: 20,
+    marginBottom: 20,
+  },
+  cameraContainer: {
+    flex: 1,
+    zIndex: 1,
+  },
+});
