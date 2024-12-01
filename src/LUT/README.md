@@ -7,6 +7,7 @@ The goal is to use Skia as the rendering engine over the React Native Vision Cam
 ## Resources
 
 - https://github.com/Shopify/react-native-skia/discussions/1436#discussioncomment-5573786
+- https://skia.org/docs/user/sksl/#evaluating-sampling-other-skshaders
 
 ## AI prompt
 
