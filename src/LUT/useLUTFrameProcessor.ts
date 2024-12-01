@@ -1,7 +1,7 @@
 import { useSkiaFrameProcessor } from "react-native-vision-camera";
 import { Skia } from "@shopify/react-native-skia";
 
-import LUTShader from "./LUTShader.sksl";
+import { createLUTColorFilter } from "./createLUTColorFilter";
 import { ParsedLUT } from "./types";
 
 export function useLUTFrameProcessor(parsedLUT: ParsedLUT) {
@@ -14,20 +14,9 @@ export function useLUTFrameProcessor(parsedLUT: ParsedLUT) {
         return;
       }
 
-      const { width, height, pixelFormat, bytesPerRow } = frame;
-      // console.log("frame info", { width, height, pixelFormat, bytesPerRow });
-
-      const shaderBuilder = Skia.RuntimeShaderBuilder(LUTShader);
-
-      // shaderBuilder.setUniform("luts", parsedLUT.data);
-
-      const imageFilter = Skia.ImageFilter.MakeRuntimeShader(
-        shaderBuilder,
-        null,
-        null
-      );
+      const colorFilter = createLUTColorFilter(parsedLUT);
       const paint = Skia.Paint();
-      paint.setImageFilter(imageFilter);
+      paint.setColorFilter(colorFilter);
 
       frame.render(paint);
     },
