@@ -13,8 +13,6 @@ The goal is to use Skia as the rendering engine over the React Native Vision Cam
 Write you own implementation from .cube to SkColorFilter.
 
 These are the available color filters: https://api.skia.org/classSkColorFilters.html#ad5bf3e8f6c59685e9a1d5e0571d11400
-I found this test in the Skia source code: https://github.com/google/skia/blob/main/src/effects/SkTableColorFilter.cpp#L255
-
-https://github.com/google/skia/blob/main/src/effects/colorfilters/SkTableColorFilter.cpp
+I found this test in the Skia source code: https://github.com/google/skia/blob/main/src/effects/colorfilters/SkTableColorFilter.cpp
 
 Shader Toy offers examples of LUT https://www.shadertoy.com/view/wtKSWw which can "easily" be converted to Skia runtime effects.
