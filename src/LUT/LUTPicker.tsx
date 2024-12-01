@@ -65,7 +65,7 @@ const PICKER_HEIGHT = 50;
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: OFFSET,
+    bottom: OFFSET,
     left: OFFSET,
     right: OFFSET,
     zIndex: 2,
