@@ -16,6 +16,10 @@ const screens: Array<Screen> = [
     name: "😵‍💫 SDF of a Line",
     routeName: "LineSDF",
   },
+  {
+    name: "🎨 Look Up Table (LUT)",
+    routeName: "LUT",
+  },
 ];
 
 export function Home() {
