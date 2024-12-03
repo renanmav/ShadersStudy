@@ -27,11 +27,11 @@ export function LUTStaticImage({ lutTexture }: Props) {
 
   return (
     <View style={styles.container}>
-      <Image
+      {/* <Image
         resizeMode="contain"
         source={STATIC_IMAGE}
         style={styles.staticImage}
-      />
+      /> */}
 
       <Canvas style={styles.canvas}>
         <Group>

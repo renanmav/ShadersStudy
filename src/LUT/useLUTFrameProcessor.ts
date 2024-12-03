@@ -14,16 +14,16 @@ export function useLUTFrameProcessor(lutTexture: SkImage) {
 
   if (lutTexture) {
     const lutsShader = lutTexture.makeShaderOptions(
-      TileMode.Repeat,
-      TileMode.Repeat,
-      FilterMode.Nearest,
+      TileMode.Clamp,
+      TileMode.Clamp,
+      FilterMode.Linear,
       MipmapMode.None
     );
 
-    const lutShader = LUTShader.makeShaderWithChildren([], [lutsShader]);
-
-    // const lutImageFilter = Skia.ImageFilter.MakeShader(lutShader, null);
-    // paint.setImageFilter(lutImageFilter);
+    const lutShader = LUTShader.makeShaderWithChildren(
+      [lutTexture.height()],
+      [lutsShader]
+    );
 
     paint.setShader(lutShader);
   }
@@ -31,8 +31,9 @@ export function useLUTFrameProcessor(lutTexture: SkImage) {
   return useSkiaFrameProcessor(
     (frame) => {
       "worklet";
+
       frame.render(paint);
     },
-    [lutTexture, paint]
+    [lutTexture]
   );
 }

@@ -23,7 +23,7 @@ export default function LUTScreen() {
   const [selectedLUT, setSelectedLUT] = useState<SelectedLUT>(null);
   const { textureLUT } = useLUTTexture(selectedLUT);
 
-  // const frameProcessor = useLUTFrameProcessor(textureLUT);
+  const frameProcessor = useLUTFrameProcessor(textureLUT);
 
   if (!hasPermission) return <PermissionsPage />;
   if (device == null) return <NoCameraDevicePage />;
@@ -35,15 +35,15 @@ export default function LUTScreen() {
       <LUTVisualizer lutTexture={textureLUT} />
       <LUTStaticImage lutTexture={textureLUT} />
 
-      {/* <View style={styles.cameraContainer}>
+      <View style={styles.cameraContainer}>
         <Camera
           style={StyleSheet.absoluteFillObject}
           device={device}
           isActive={true}
           pixelFormat="rgb"
-          // frameProcessor={frameProcessor}
+          frameProcessor={frameProcessor}
         />
-      </View> */}
+      </View>
     </View>
   );
 }
