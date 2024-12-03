@@ -2,20 +2,29 @@
 
 // uniforms
 uniform shader image;
-uniform shader luts;
+uniform shader lutTexture;
+
+uniform float lutSize;
+
+half3 applyLUT(half3 color) {
+    // Scale the colors to LUT space and convert to coordinates
+    float r = color.r * (lutSize - 1.0);
+    float g = color.g * (lutSize - 1.0);
+    float b = color.b * (lutSize - 1.0);
+
+    // Calculate texture coordinates
+    // Use floor() instead of int() for proper float calculations
+    float lutX = floor(mod(b, lutSize)) * lutSize + floor(r);
+    float lutY = floor(b / lutSize) * lutSize + floor(g);
+
+    // Sample LUT
+    return lutTexture.eval(float2(lutX, lutY)).rgb;
+}
 
 // main
 half4 main(float2 xy) {
-    vec4 color = image.eval(xy);
+    half4 color = image.eval(xy);
+    color.rgb = applyLUT(color.rgb);
 
-    int r = int(color.r * 255.0 / 4);
-    int g = int(color.g * 255.0 / 4);
-    int b = int(color.b * 255.0 / 4);
-
-    float lutX = float(int(mod(float(b), 8.0)) * 64 + r);
-    float lutY = float(int((b / 8) * 64 + g));
-
-    vec4 lutsColor = luts.eval(float2(lutX, lutY));
-
-    return lutsColor;
+    return color;
 }

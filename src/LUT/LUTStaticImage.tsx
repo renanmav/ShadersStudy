@@ -1,4 +1,4 @@
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, Dimensions } from "react-native";
 import {
   Canvas,
   Fill,
@@ -13,6 +13,8 @@ import {
 import LUTShader from "./LUTShader.sksl";
 
 const STATIC_IMAGE = require("../../assets/cars-rgb.jpeg");
+
+const SIZE = 33;
 
 interface Props {
   lutTexture: SkImage;
@@ -34,18 +36,7 @@ export function LUTStaticImage({ lutTexture }: Props) {
       <Canvas style={styles.canvas}>
         <Group>
           <Fill />
-          <Shader source={LUTShader} uniforms={{}}>
-            <ImageShader
-              fit="none"
-              image={lutTexture}
-              rect={{
-                x: 0,
-                y: 0,
-                width: 512,
-                height: 512,
-              }}
-            />
-
+          <Shader source={LUTShader} uniforms={{ lutSize: SIZE }}>
             <ImageShader
               fit="contain"
               image={image}
@@ -54,6 +45,16 @@ export function LUTStaticImage({ lutTexture }: Props) {
                 y: 0,
                 width: WIDTH,
                 height: HEIGHT,
+              }}
+            />
+            <ImageShader
+              fit="none"
+              image={lutTexture}
+              rect={{
+                x: 0,
+                y: 0,
+                width: SIZE * SIZE,
+                height: SIZE,
               }}
             />
           </Shader>
@@ -82,13 +83,15 @@ export function LUTStaticImage({ lutTexture }: Props) {
   );
 }
 
-const WIDTH = 200;
-const HEIGHT = 150;
+const { width } = Dimensions.get("screen");
+
+const WIDTH = width;
+const HEIGHT = width * (880 / 1580);
 
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    top: 0,
+    top: SIZE,
     right: 0,
     borderWidth: 1,
     borderColor: "red",
