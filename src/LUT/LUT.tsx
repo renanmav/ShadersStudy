@@ -13,7 +13,8 @@ import { LUTPicker } from "./LUTPicker";
 import { useLUTTexture } from "./useLUTTexture";
 import { useLUTFrameProcessor } from "./useLUTFrameProcessor";
 import { LUTVisualizer } from "./LUTVisualizer";
-import { LUTStaticImage } from "./LUTStaticImage";
+import { LUTStaticImageDeclarative } from "./LUTStaticImageDeclarative";
+import { LUTStaticImageImperative } from "./LUTStaticImageImperative";
 import { SelectedLUT } from "./types";
 
 export default function LUTScreen() {
@@ -33,7 +34,8 @@ export default function LUTScreen() {
       <LUTPicker value={selectedLUT} onChange={setSelectedLUT} />
 
       <LUTVisualizer lutTexture={textureLUT} />
-      <LUTStaticImage lutTexture={textureLUT} />
+      <LUTStaticImageDeclarative lutTexture={textureLUT} />
+      {/* <LUTStaticImageImperative lutTexture={textureLUT} /> */}
 
       <View style={styles.cameraContainer}>
         <Camera

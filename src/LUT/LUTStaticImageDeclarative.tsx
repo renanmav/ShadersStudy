@@ -20,7 +20,7 @@ interface Props {
   lutTexture: SkImage;
 }
 
-export function LUTStaticImage({ lutTexture }: Props) {
+export function LUTStaticImageDeclarative({ lutTexture }: Props) {
   const image = useImage(STATIC_IMAGE);
 
   if (!image || !lutTexture) return null;
@@ -93,8 +93,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: SIZE,
     right: 0,
-    borderWidth: 1,
-    borderColor: "red",
+    // borderWidth: 1,
+    // borderColor: "red",
     width: WIDTH,
     height: HEIGHT,
     zIndex: 4,
