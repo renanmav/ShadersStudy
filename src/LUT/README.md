@@ -8,6 +8,8 @@ The goal is to use Skia as the rendering engine over the React Native Vision Cam
 
 - https://github.com/Shopify/react-native-skia/discussions/1436#discussioncomment-5573786
 - https://skia.org/docs/user/sksl/#evaluating-sampling-other-skshaders
+- https://lettier.github.io/3d-game-shaders-for-beginners/lookup-table.html
+- https://github.com/thiagoamendola/godot-color-lut-shader
 
 ## AI prompt
 
