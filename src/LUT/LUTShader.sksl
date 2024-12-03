@@ -13,7 +13,6 @@ half3 applyLUT(half3 color) {
     float b = color.b * (lutSize - 1.0);
 
     // Calculate texture coordinates
-    // Use floor() instead of int() for proper float calculations
     float lutX = floor(mod(b, lutSize)) * lutSize + floor(r);
     float lutY = floor(b / lutSize) * lutSize + floor(g);
 

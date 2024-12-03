@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import * as FileSystem from "expo-file-system";
 import {
   AlphaType,
+  clamp,
   ColorType,
   Skia,
   SkImage,
@@ -50,24 +51,30 @@ async function transformLutToImage(parsedLUT: ParsedLUT) {
   const width = parsedLUT.size * parsedLUT.size;
   const height = parsedLUT.size;
 
-  const lutData = new Uint8Array(width * height * 4);
+  const pixels = new Uint8Array(width * height * 4);
 
   for (let z = 0; z < parsedLUT.size; z++) {
     for (let y = 0; y < parsedLUT.size; y++) {
       for (let x = 0; x < parsedLUT.size; x++) {
-        const pixelIndex = ((z * parsedLUT.size + y) * parsedLUT.size + x) * 4;
-        const index =
-          (x * parsedLUT.size * parsedLUT.size + y * parsedLUT.size + z) * 3;
+        const lutIndex =
+          (z * parsedLUT.size * parsedLUT.size + y * parsedLUT.size + x) * 3;
+        const pixelIndex = (y * width + z * parsedLUT.size + x) * 4;
 
-        lutData[pixelIndex + 0] = parsedLUT.data[index + 0] * 255; // R
-        lutData[pixelIndex + 1] = parsedLUT.data[index + 1] * 255; // G
-        lutData[pixelIndex + 2] = parsedLUT.data[index + 2] * 255; // B
-        lutData[pixelIndex + 3] = 255; // Alpha
+        pixels[pixelIndex + 0] = Math.round(
+          clamp(parsedLUT.data[lutIndex] * 255, 0, 255)
+        ); // R
+        pixels[pixelIndex + 1] = Math.round(
+          clamp(parsedLUT.data[lutIndex + 1] * 255, 0, 255)
+        ); // G
+        pixels[pixelIndex + 2] = Math.round(
+          clamp(parsedLUT.data[lutIndex + 2] * 255, 0, 255)
+        ); // B
+        pixels[pixelIndex + 3] = 255; // Alpha
       }
     }
   }
 
-  const skData = Skia.Data.fromBytes(lutData);
+  const skData = Skia.Data.fromBytes(pixels);
 
   const skImage = Skia.Image.MakeImage(
     {
