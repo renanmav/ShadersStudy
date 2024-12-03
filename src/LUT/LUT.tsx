@@ -17,6 +17,10 @@ import { LUTStaticImageDeclarative } from "./LUTStaticImageDeclarative";
 import { LUTStaticImageImperative } from "./LUTStaticImageImperative";
 import { SelectedLUT } from "./types";
 
+import LUTShader from "./LUTShader.sksl";
+
+const SIZE = 33;
+
 export default function LUTScreen() {
   const device = useCameraDevice("back");
   const { hasPermission } = useCameraPermission();
@@ -28,6 +32,13 @@ export default function LUTScreen() {
 
   if (!hasPermission) return <PermissionsPage />;
   if (device == null) return <NoCameraDevicePage />;
+
+  const lutProps = {
+    cameraShader: LUTShader,
+    uniforms: { lutSize: textureLUT.height() },
+    lutTexture: textureLUT,
+    lutSize: textureLUT.height(),
+  };
 
   return (
     <View style={styles.container}>
@@ -44,6 +55,7 @@ export default function LUTScreen() {
           isActive={true}
           pixelFormat="rgb"
           frameProcessor={frameProcessor}
+          {...lutProps}
         />
       </View>
     </View>

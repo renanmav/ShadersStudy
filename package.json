@@ -35,5 +35,8 @@
     "@types/react": "~18.3.12",
     "metro-react-native-babel-transformer": "^0.77.0",
     "typescript": "~5.3.3"
+  },
+  "patchedDependencies": {
+    "react-native-vision-camera@4.6.3": "patches/react-native-vision-camera@4.6.3.patch"
   }
 }

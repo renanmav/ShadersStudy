@@ -1,0 +1,108 @@
+diff --git a/node_modules/react-native-vision-camera/.bun-tag-a395646a11ade571 b/.bun-tag-a395646a11ade571
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/node_modules/react-native-vision-camera/.bun-tag-c6cac9d6a5e1857c b/.bun-tag-c6cac9d6a5e1857c
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/src/Camera.tsx b/src/Camera.tsx
+index afe056a7616c343eb4ab39c0b5f04ee80ceb7ad9..b46c0e0d32b125c7c6c6d182e464704a10e4c4a8 100644
+--- a/src/Camera.tsx
++++ b/src/Camera.tsx
+@@ -616,7 +616,7 @@ export class Camera extends React.PureComponent<CameraProps, CameraState> {
+   /** @internal */
+   public render(): React.ReactNode {
+     // We remove the big `device` object from the props because we only need to pass `cameraId` to native.
+-    const { device, frameProcessor, codeScanner, enableFpsGraph, fps, videoBitRate, ...props } = this.props
++    const { device, frameProcessor, codeScanner, enableFpsGraph, fps, videoBitRate, cameraShader, uniforms, lutSize, lutTexture, ...props } = this.props
+ 
+     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+     if (device == null) {
+@@ -678,6 +678,10 @@ export class Camera extends React.PureComponent<CameraProps, CameraState> {
+             style={styles.customPreviewView}
+             offscreenTextures={frameProcessor.offscreenTextures}
+             resizeMode={props.resizeMode}
++            cameraShader={cameraShader}
++            uniforms={uniforms}
++            lutSize={lutSize}
++            lutTexture={lutTexture}
+           />
+         )}
+         {enableFpsGraph && (
+diff --git a/src/skia/SkiaCameraCanvas.tsx b/src/skia/SkiaCameraCanvas.tsx
+index 56d4e0ead70b307c5170a61d3ca6bc716cd8b266..56a33cec2841ae65c8fd4ec25d096eeb2ce9ec2f 100644
+--- a/src/skia/SkiaCameraCanvas.tsx
++++ b/src/skia/SkiaCameraCanvas.tsx
+@@ -1,12 +1,12 @@
+ import React, { useCallback, useState } from 'react'
+ import type { LayoutChangeEvent, ViewProps } from 'react-native'
+-import type { CameraProps } from '../types/CameraProps'
++import type { CameraProps, LUTProps } from '../types/CameraProps'
+ import type { ISharedValue } from 'react-native-worklets-core'
+ import type { SkImage } from '@shopify/react-native-skia'
+ import { ReanimatedProxy } from '../dependencies/ReanimatedProxy'
+ import { SkiaProxy } from '../dependencies/SkiaProxy'
+ 
+-interface SkiaCameraCanvasProps extends ViewProps {
++interface SkiaCameraCanvasProps extends ViewProps, LUTProps {
+   /**
+    * The offscreen textures queue that have been rendered by the Skia Frame Processor.
+    *
+@@ -19,7 +19,7 @@ interface SkiaCameraCanvasProps extends ViewProps {
+   resizeMode: CameraProps['resizeMode']
+ }
+ 
+-function SkiaCameraCanvasImpl({ offscreenTextures, resizeMode = 'cover', children, ...props }: SkiaCameraCanvasProps): React.ReactElement {
++function SkiaCameraCanvasImpl({ offscreenTextures, resizeMode = 'cover', children, cameraShader, uniforms, lutSize, lutTexture, ...props }: SkiaCameraCanvasProps): React.ReactElement {
+   const texture = ReanimatedProxy.useSharedValue<SkImage | null>(null)
+   const [width, setWidth] = useState(0)
+   const [height, setHeight] = useState(0)
+@@ -49,7 +49,15 @@ function SkiaCameraCanvasImpl({ offscreenTextures, resizeMode = 'cover', childre
+   return (
+     <SkiaProxy.Canvas {...props} onLayout={onLayout} pointerEvents="none">
+       {children}
+-      <SkiaProxy.Image x={0} y={0} width={width} height={height} fit={resizeMode} image={texture} />
++      {cameraShader ? (
++        <SkiaProxy.Group>
++          <SkiaProxy.Fill />
++          <SkiaProxy.Shader source={cameraShader!} uniforms={uniforms}>
++            <SkiaProxy.ImageShader x={0} y={0} width={width} height={height} fit={resizeMode} image={texture} />
++            <SkiaProxy.ImageShader x={0} y={0} width={lutSize! * lutSize!} height={lutSize!} fit="none" image={lutTexture!} />
++          </SkiaProxy.Shader>
++        </SkiaProxy.Group>
++      ) : <SkiaProxy.Image x={0} y={0} width={width} height={height} fit={resizeMode} image={texture} />}
+     </SkiaProxy.Canvas>
+   )
+ }
+diff --git a/src/types/CameraProps.ts b/src/types/CameraProps.ts
+index 18bfc9b618fa97d5096657e1b2398ac23956de76..43d41ba08f89587cc5ab6a43713d2a8e557706f1 100644
+--- a/src/types/CameraProps.ts
++++ b/src/types/CameraProps.ts
+@@ -4,7 +4,7 @@ import type { CameraRuntimeError } from '../CameraError'
+ import type { CodeScanner } from './CodeScanner'
+ import type { Frame } from './Frame'
+ import type { ISharedValue } from 'react-native-worklets-core'
+-import type { SkImage } from '@shopify/react-native-skia'
++import type { SkImage, SkRuntimeEffect, AnimatedProp, Uniforms } from '@shopify/react-native-skia'
+ import type { OutputOrientation } from './OutputOrientation'
+ import type { Orientation } from './Orientation'
+ 
+@@ -26,11 +26,18 @@ export interface OnShutterEvent {
+   type: 'photo' | 'snapshot'
+ }
+ 
++export interface LUTProps {
++  cameraShader?: SkRuntimeEffect
++  uniforms?: AnimatedProp<Uniforms>
++  lutSize?: number
++  lutTexture?: SkImage
++}
++
+ // TODO: Use RCT_ENUM_PARSER for stuff like torch, videoStabilizationMode, and orientation
+ // TODO: Use Photo HostObject for stuff like depthData, portraitEffects, etc.
+ // TODO: Add RAW capture support
+ 
+-export interface CameraProps extends ViewProps {
++export interface CameraProps extends ViewProps, LUTProps {
+   /**
+    * The Camera Device to use.
+    *
