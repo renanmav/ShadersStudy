@@ -10,9 +10,10 @@ import PermissionsPage from "./PermissionsPage";
 import NoCameraDevicePage from "./NoCameraDevicePage";
 
 import { LUTPicker } from "./LUTPicker";
-import { useLUTTransformer } from "./useLUTTransformer";
+import { useLUTTexture } from "./useLUTTexture";
 import { useLUTFrameProcessor } from "./useLUTFrameProcessor";
 import { LUTVisualizer } from "./LUTVisualizer";
+import { LUTStaticImage } from "./LUTStaticImage";
 import { SelectedLUT } from "./types";
 
 export default function LUTScreen() {
@@ -20,9 +21,9 @@ export default function LUTScreen() {
   const { hasPermission } = useCameraPermission();
 
   const [selectedLUT, setSelectedLUT] = useState<SelectedLUT>(null);
-  const { dataLUT, imageLUT } = useLUTTransformer(selectedLUT);
+  const { textureLUT } = useLUTTexture(selectedLUT);
 
-  const frameProcessor = useLUTFrameProcessor(dataLUT);
+  const frameProcessor = useLUTFrameProcessor(textureLUT);
 
   if (!hasPermission) return <PermissionsPage />;
   if (device == null) return <NoCameraDevicePage />;
@@ -31,7 +32,8 @@ export default function LUTScreen() {
     <View style={styles.container}>
       <LUTPicker value={selectedLUT} onChange={setSelectedLUT} />
 
-      <LUTVisualizer imageLUT={imageLUT} />
+      <LUTVisualizer lutTexture={textureLUT} />
+      <LUTStaticImage lutTexture={textureLUT} />
 
       <View style={styles.cameraContainer}>
         <Camera

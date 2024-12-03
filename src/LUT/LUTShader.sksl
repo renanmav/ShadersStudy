@@ -19,9 +19,3 @@ half4 main(float2 xy) {
 
     return lutsColor;
 }
-
-// // invert colors
-// half4 main(vec2 pos) {
-// vec4 color = image.eval(pos);
-// return vec4((1.0 - color).rgb, 1.0);
-// }

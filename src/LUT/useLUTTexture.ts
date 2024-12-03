@@ -46,24 +46,24 @@ async function loadAndParseCubeLUT(
   }
 }
 
+const LUT_SIZE = 512;
+const BLOCK_SIZE = 64;
+
 async function transformLutToImage(parsedLUT: ParsedLUT) {
-  const lutSize = 512;
-  const blockSize = 64;
+  const lutData = new Uint8Array(LUT_SIZE * LUT_SIZE * 4);
 
-  const lutData = new Uint8Array(lutSize * lutSize * 4);
-
-  for (let by = 0; by < lutSize; by += blockSize) {
-    for (let bx = 0; bx < lutSize; bx += blockSize) {
-      for (let y = 0; y < blockSize; y++) {
-        for (let x = 0; x < blockSize; x++) {
-          const b = (by + y) / (lutSize - 1);
-          const g = (bx + x) / (lutSize - 1);
+  for (let by = 0; by < LUT_SIZE; by += BLOCK_SIZE) {
+    for (let bx = 0; bx < LUT_SIZE; bx += BLOCK_SIZE) {
+      for (let y = 0; y < BLOCK_SIZE; y++) {
+        for (let x = 0; x < BLOCK_SIZE; x++) {
+          const b = (by + y) / (LUT_SIZE - 1);
+          const g = (bx + x) / (LUT_SIZE - 1);
           const r =
-            (Math.floor(by / blockSize) * blockSize +
-              Math.floor(bx / blockSize)) /
-            (lutSize / blockSize - 1);
+            (Math.floor(by / BLOCK_SIZE) * BLOCK_SIZE +
+              Math.floor(bx / BLOCK_SIZE)) /
+            (LUT_SIZE / BLOCK_SIZE - 1);
 
-          const pixelIndex = ((by + y) * lutSize + (bx + x)) * 4;
+          const pixelIndex = ((by + y) * LUT_SIZE + (bx + x)) * 4;
 
           // Get RGB values from parsed LUT data
           const ri = Math.min(
@@ -95,8 +95,8 @@ async function transformLutToImage(parsedLUT: ParsedLUT) {
 
   // Log LUT texture stats
   console.log("LUT texture stats:", {
-    size: lutSize,
-    totalPixels: lutSize * lutSize,
+    size: LUT_SIZE,
+    totalPixels: LUT_SIZE * LUT_SIZE,
     bytesPerPixel: 4,
     totalBytes: lutData.length,
   });
@@ -105,30 +105,29 @@ async function transformLutToImage(parsedLUT: ParsedLUT) {
 
   const skImage = Skia.Image.MakeImage(
     {
-      width: lutSize,
-      height: lutSize,
+      width: LUT_SIZE,
+      height: LUT_SIZE,
       alphaType: AlphaType.Unpremul,
       colorType: ColorType.RGBA_8888,
     },
     skData,
-    4 * lutSize
+    4 * LUT_SIZE
   );
 
   if (!skImage) {
     throw new Error("Failed to create Skia image");
   }
 
-  const bytes = Array.from(skImage.encodeToBytes());
-  if (!bytes) {
-    throw new Error("Failed to encode image");
-  }
+  console.log("Created SkImage:", {
+    width: skImage.width(),
+    height: skImage.height(),
+  });
 
-  return { data: bytes, skImage };
+  return { skImage };
 }
 
-export function useLUTTransformer(selectedLUT: SelectedLUT) {
-  const [dataLUT, setDataLUT] = useState<any>();
-  const [imageLUT, setImageLUT] = useState<SkImage>();
+export function useLUTTexture(selectedLUT: SelectedLUT) {
+  const [textureLUT, setTextureLUT] = useState<SkImage>();
 
   useEffect(() => {
     let isMounted = true;
@@ -137,9 +136,8 @@ export function useLUTTransformer(selectedLUT: SelectedLUT) {
       if (!selectedLUT) return;
       const result = await loadAndParseCubeLUT(selectedLUT);
       if (result && isMounted) {
-        const { data, skImage } = await transformLutToImage(result);
-        setDataLUT(data);
-        setImageLUT(skImage);
+        const { skImage } = await transformLutToImage(result);
+        setTextureLUT(skImage);
       }
     }
 
@@ -150,5 +148,5 @@ export function useLUTTransformer(selectedLUT: SelectedLUT) {
     };
   }, [selectedLUT]);
 
-  return { dataLUT, imageLUT };
+  return { textureLUT };
 }

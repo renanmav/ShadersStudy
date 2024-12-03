@@ -11,7 +11,7 @@ The goal is to use Skia as the rendering engine over the React Native Vision Cam
 
 ## AI prompt
 
-Write you own implementation from .cube to SkColorFilter.
+Write your own implementation from .cube to SkColorFilter.
 
 These are the available color filters: https://api.skia.org/classSkColorFilters.html#ad5bf3e8f6c59685e9a1d5e0571d11400
 I found this test in the Skia source code: https://github.com/google/skia/blob/main/src/effects/colorfilters/SkTableColorFilter.cpp

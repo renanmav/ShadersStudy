@@ -1,30 +1,38 @@
 import { useSkiaFrameProcessor } from "react-native-vision-camera";
-import { Skia } from "@shopify/react-native-skia";
+import {
+  Skia,
+  SkImage,
+  TileMode,
+  FilterMode,
+  MipmapMode,
+} from "@shopify/react-native-skia";
 
 import LUTShader from "./LUTShader.sksl";
 
-export function useLUTFrameProcessor(luts: any) {
-  const shaderBuilder = Skia.RuntimeShaderBuilder(LUTShader);
-
-  // if (luts.length > 0) {
-  //   console.log("luts.length", luts.length);
-  //   shaderBuilder.setUniform("luts", luts);
-  // }
-
-  const imageFilter = Skia.ImageFilter.MakeRuntimeShader(
-    shaderBuilder,
-    null,
-    null
-  );
-
+export function useLUTFrameProcessor(lutTexture: SkImage) {
   const paint = Skia.Paint();
-  paint.setImageFilter(imageFilter);
+
+  if (lutTexture) {
+    const lutsShader = lutTexture.makeShaderOptions(
+      TileMode.Repeat,
+      TileMode.Repeat,
+      FilterMode.Nearest,
+      MipmapMode.None
+    );
+
+    const lutShader = LUTShader.makeShaderWithChildren([], [lutsShader]);
+
+    // const lutImageFilter = Skia.ImageFilter.MakeShader(lutShader, null);
+    // paint.setImageFilter(lutImageFilter);
+
+    paint.setShader(lutShader);
+  }
 
   return useSkiaFrameProcessor(
     (frame) => {
       "worklet";
       frame.render(paint);
     },
-    [luts]
+    [lutTexture, paint]
   );
 }

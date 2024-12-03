@@ -3,12 +3,12 @@ import { Canvas, Image, SkImage } from "@shopify/react-native-skia";
 
 const SIZE = 64;
 
-export function LUTVisualizer({ imageLUT }: { imageLUT: SkImage }) {
+export function LUTVisualizer({ lutTexture }: { lutTexture: SkImage }) {
   return (
     <Canvas style={styles.container}>
-      {imageLUT && (
+      {lutTexture && (
         <Image
-          image={imageLUT}
+          image={lutTexture}
           fit="contain"
           x={0}
           y={0}
