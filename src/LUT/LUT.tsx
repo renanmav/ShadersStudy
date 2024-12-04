@@ -45,8 +45,8 @@ export default function LUTScreen() {
       <LUTPicker value={selectedLUT} onChange={setSelectedLUT} />
 
       <LUTVisualizer lutTexture={textureLUT} />
-      {/* <LUTStaticImageDeclarative lutTexture={textureLUT} /> */}
-      {/* <LUTStaticImageImperative lutTexture={textureLUT} /> */}
+      <LUTStaticImageDeclarative lutTexture={textureLUT} />
+      <LUTStaticImageImperative lutTexture={textureLUT} />
 
       <View style={styles.cameraContainer}>
         <Camera
