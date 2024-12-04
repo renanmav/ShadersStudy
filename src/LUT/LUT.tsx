@@ -35,9 +35,9 @@ export default function LUTScreen() {
 
   const lutProps = {
     cameraShader: LUTShader,
-    uniforms: { lutSize: textureLUT.height() },
+    uniforms: { lutSize: textureLUT?.height() ?? 0 },
     lutTexture: textureLUT,
-    lutSize: textureLUT.height(),
+    lutSize: textureLUT?.height() ?? 0,
   };
 
   return (
@@ -45,7 +45,7 @@ export default function LUTScreen() {
       <LUTPicker value={selectedLUT} onChange={setSelectedLUT} />
 
       <LUTVisualizer lutTexture={textureLUT} />
-      <LUTStaticImageDeclarative lutTexture={textureLUT} />
+      {/* <LUTStaticImageDeclarative lutTexture={textureLUT} /> */}
       {/* <LUTStaticImageImperative lutTexture={textureLUT} /> */}
 
       <View style={styles.cameraContainer}>

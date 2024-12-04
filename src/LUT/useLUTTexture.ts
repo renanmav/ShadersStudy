@@ -100,7 +100,7 @@ async function transformLutToImage(parsedLUT: ParsedLUT) {
 }
 
 export function useLUTTexture(selectedLUT: SelectedLUT) {
-  const [textureLUT, setTextureLUT] = useState<SkImage>();
+  const [textureLUT, setTextureLUT] = useState<SkImage | null>(null);
 
   useEffect(() => {
     let isMounted = true;
